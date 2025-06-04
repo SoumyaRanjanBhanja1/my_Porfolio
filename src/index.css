@@ -1,0 +1,21 @@
+@import "tailwindcss";
+/* Default Light Mode */
+body {
+  background-color: white;
+  color: black;
+}
+
+/* Dark Mode */
+body.dark-mode {
+  background-color: #1a202c;
+  color: rgb(97, 74, 97);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.box {
+  animation: var(--my-animation);
+}
