@@ -1,4 +1,5 @@
-// UserDashboard.tsx
+// src/components/UserDashboard.tsx
+import React, { useEffect, useState, type MouseEvent } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -7,6 +8,7 @@ import {
   Drawer,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   Box,
   IconButton,
@@ -14,14 +16,15 @@ import {
   MenuItem,
   Card,
   CardContent,
-  Grid,
+  Grid
 } from '@mui/material';
-import { useEffect, useState, MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
+// ✅ Recharts
 import {
   LineChart,
   Line,
@@ -30,7 +33,7 @@ import {
   Tooltip,
   CartesianGrid,
   Legend,
-  ResponsiveContainer,
+  ResponsiveContainer
 } from 'recharts';
 
 const drawerWidth = 240;
@@ -40,7 +43,7 @@ interface AnalyticsData {
   spend: number;
 }
 
-export default function UserDashboard() {
+export default function UserDashboard(): React.JSX.Element {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData[]>([]);
@@ -64,8 +67,8 @@ export default function UserDashboard() {
       try {
         const res = await axios.get('/api/user/analytics', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
         });
         setAnalyticsData(Array.isArray(res.data) ? res.data : []);
       } catch (error) {
@@ -83,7 +86,7 @@ export default function UserDashboard() {
       {/* AppBar */}
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap>
             User Dashboard
           </Typography>
           <IconButton color="inherit" onClick={handleMenuClick}>
@@ -101,14 +104,16 @@ export default function UserDashboard() {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' }
         }}
       >
         <Toolbar />
         <List>
           {['Home', 'Orders', 'Account Settings'].map((text) => (
-            <ListItem key={text} button component="div">
-              <ListItemText primary={text} />
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemText primary={text} />
+              </ListItemButton>
             </ListItem>
           ))}
         </List>
@@ -124,9 +129,9 @@ export default function UserDashboard() {
           Welcome Back!
         </Typography>
 
-        <Grid container spacing={3} component="div">
+        <Grid container spacing={3}>
           {/* Chart Section */}
-          <Grid item xs={12} md={6} component="div">
+          <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
                 <Typography variant="h6">Spending Overview</Typography>
@@ -145,7 +150,7 @@ export default function UserDashboard() {
           </Grid>
 
           {/* Profile Section */}
-          <Grid item xs={12} md={6} component="div">
+          <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
                 <Typography variant="h6">Profile Summary</Typography>

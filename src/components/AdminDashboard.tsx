@@ -1,12 +1,18 @@
 // AdminDashboard.tsx
 
-import { useEffect, useRef, useState, MouseEvent } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent
+} from 'react';
 import {
   AppBar, Toolbar, Typography, CssBaseline, Drawer,
   List, ListItem, ListItemText, Box, IconButton,
   Menu, MenuItem, CircularProgress
 } from '@mui/material';
 import { Canvas, useFrame } from '@react-three/fiber';
+import { Mesh } from 'three'; // ✅ Import for THREE.Mesh
 import { keyframes } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
@@ -24,8 +30,8 @@ interface Message {
 }
 
 // 3D Rotating Cube
-function RotatingCube(): JSX.Element {
-  const mesh = useRef<THREE.Mesh>(null!);
+function RotatingCube(): React.JSX.Element {
+  const mesh = useRef<Mesh>(null!);
 
   useFrame(({ clock }) => {
     if (mesh.current) {
@@ -53,7 +59,7 @@ const glow = keyframes`
   }
 `;
 
-export default function AdminDashboard(): JSX.Element {
+export default function AdminDashboard(): React.JSX.Element {
   const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -102,7 +108,7 @@ export default function AdminDashboard(): JSX.Element {
       <CssBaseline />
       <ToastContainer />
 
-      {/* Top AppBar */}
+      {/* AppBar */}
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography variant="h6" noWrap>
@@ -121,7 +127,7 @@ export default function AdminDashboard(): JSX.Element {
         </Toolbar>
       </AppBar>
 
-      {/* Sidebar Drawer */}
+      {/* Drawer */}
       <Drawer
         variant="permanent"
         sx={{
@@ -133,14 +139,14 @@ export default function AdminDashboard(): JSX.Element {
         <Toolbar />
         <List>
           {['Dashboard', 'Users', 'Settings'].map((text) => (
-            <ListItem key={text} button component="li">
+            <ListItem key={text} component="button">
               <ListItemText primary={text} />
             </ListItem>
           ))}
         </List>
       </Drawer>
 
-      {/* Main Dashboard Content */}
+      {/* Main Content */}
       <Box
         component="main"
         sx={{
