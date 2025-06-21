@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   AppBar, Toolbar, Typography, CssBaseline, Drawer,
-  List, ListItem, ListItemText, Box, Avatar, IconButton,
+  List, ListItem, ListItemText, Box, IconButton,
   Menu, MenuItem, CircularProgress
 } from '@mui/material';
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -14,9 +14,17 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const drawerWidth = 240;
 
-// 3D Rotating Cube
-function RotatingCube() {
-  const mesh = useRef(null);
+// ✅ Message Type
+type Message = {
+  _id?: string;
+  name: string;
+  email: string;
+  message: string;
+};
+
+// ✅ 3D Rotating Cube
+function RotatingCube(): JSX.Element {
+  const mesh = useRef<THREE.Mesh>(null!);
   useFrame(({ clock }) => {
     if (mesh.current) {
       mesh.current.rotation.x = clock.getElapsedTime() / 2;
@@ -26,12 +34,12 @@ function RotatingCube() {
   return (
     <mesh ref={mesh}>
       <boxGeometry args={[2, 2, 2]} />
-      <meshStandardMaterial color="royalblue" wireframe={false} />
+      <meshStandardMaterial color="royalblue" />
     </mesh>
   );
 }
 
-// Glow animation
+// ✅ Glow animation
 const glow = keyframes`
   0%, 100% {
     text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff;
@@ -41,10 +49,10 @@ const glow = keyframes`
   }
 `;
 
-export default function AdminDashboard() {
+export default function AdminDashboard(): JSX.Element {
   const navigate = useNavigate();
-  const [messages, setMessages] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -54,17 +62,22 @@ export default function AdminDashboard() {
     setTimeout(() => navigate('/'), 1000);
   };
 
+  const handleAvatarClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
   useEffect(() => {
     const fetchMessages = async () => {
       setLoading(true);
       try {
-        const res = await axios.get('http://localhost:5000/api/admin/messages', {
+        const res = await axios.get<Message[]>('http://localhost:5000/api/admin/messages', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
         setMessages(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
+        console.error('Fetch error:', err);
         toast.error('Failed to fetch messages');
       }
       setLoading(false);
@@ -84,20 +97,16 @@ export default function AdminDashboard() {
       <CssBaseline />
       <ToastContainer />
 
-      {/* AppBar */}
+      {/* App Bar */}
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography variant="h6" noWrap>
             Admin Dashboard
           </Typography>
-          <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} color="inherit">
+          <IconButton onClick={handleAvatarClick} color="inherit">
             <AccountCircleIcon />
           </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={() => setAnchorEl(null)}
-          >
+          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
         </Toolbar>
@@ -136,6 +145,7 @@ export default function AdminDashboard() {
       >
         <Toolbar />
 
+        {/* Heading */}
         <Typography
           variant="h3"
           sx={{
@@ -181,7 +191,7 @@ export default function AdminDashboard() {
           />
         </Box>
 
-        {/* Messages */}
+        {/* Messages List */}
         <Box sx={{ mb: 3 }}>
           <Typography variant="h5" sx={{ mb: 2 }}>User Messages</Typography>
           {loading ? (
@@ -192,7 +202,10 @@ export default function AdminDashboard() {
             <Typography>No messages found.</Typography>
           ) : (
             filteredMessages.map((msg) => (
-              <Box key={msg._id} sx={{ mb: 2, p: 2, border: '1px solid #00ffff33', borderRadius: 2 }}>
+              <Box
+                key={msg._id}
+                sx={{ mb: 2, p: 2, border: '1px solid #00ffff33', borderRadius: 2 }}
+              >
                 <Typography variant="subtitle1"><strong>Name:</strong> {msg.name}</Typography>
                 <Typography variant="subtitle2"><strong>Email:</strong> {msg.email}</Typography>
                 <Typography variant="body1"><strong>Message:</strong> {msg.message}</Typography>
