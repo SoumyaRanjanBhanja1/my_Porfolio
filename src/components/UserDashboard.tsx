@@ -28,8 +28,8 @@ const drawerWidth = 240;
 
 export default function UserDashboard() {
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [analyticsData, setAnalyticsData] = useState([]);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [analyticsData, setAnalyticsData] = useState<any[]>([]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -45,7 +45,7 @@ export default function UserDashboard() {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
-        setAnalyticsData(res.data);
+        setAnalyticsData(Array.isArray(res.data) ? res.data : []);
       } catch (error) {
         toast.error('Failed to load analytics');
       }
@@ -83,7 +83,7 @@ export default function UserDashboard() {
         <Toolbar />
         <List>
           {['Home', 'Orders', 'Account Settings'].map((text) => (
-            <ListItem button key={text}>
+            <ListItem key={text} button component="div">
               <ListItemText primary={text} />
             </ListItem>
           ))}
@@ -97,8 +97,8 @@ export default function UserDashboard() {
         <Toolbar />
         <Typography variant="h4" sx={{ mb: 3 }}>Welcome Back!</Typography>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+        <Grid container spacing={3} component="div">
+          <Grid item xs={12} md={6} component="div">
             <Card>
               <CardContent>
                 <Typography variant="h6">Spending Overview</Typography>
@@ -116,7 +116,7 @@ export default function UserDashboard() {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} component="div">
             <Card>
               <CardContent>
                 <Typography variant="h6">Profile Summary</Typography>
